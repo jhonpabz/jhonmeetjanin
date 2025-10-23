@@ -65,7 +65,7 @@ const handleSubmit = event => {
   const myForm = event.target;
   const formData = new FormData(myForm);
 
-  fetch("/", {
+  fetch("/POST", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams(formData).toString()
@@ -74,7 +74,7 @@ const handleSubmit = event => {
     .catch(error => alert(error));
 };
 
-document.querySelector("form").addEventListener("submit", handleSubmit);
+document.querySelector("form").addEventListener("submit", handleSubmit)
 
 updateCountdown()
 setInterval(updateCountdown, 1000)
