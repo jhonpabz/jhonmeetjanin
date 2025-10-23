@@ -185,9 +185,8 @@
         </p>
 
         <form
+          id="rsvpForm"
           name="rsvp-form"
-          action="POST"
-          method="post"
           data-netlify="true"
           class="rsvp-form"
         >
@@ -234,7 +233,10 @@
             ></textarea>
           </div>
 
-          <button type="submit" class="submit-btn">Submit RSVP</button>
+          <button type="submit" class="submit-btn">
+            <span class="btn-text">Submit RSVP</span>
+            <span class="btn-loader" style="display: none">Submitting...</span>
+          </button>
 
           <div class="form-message" id="formMessage"></div>
         </form>

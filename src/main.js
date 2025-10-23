@@ -24,6 +24,61 @@ function updateCountdown() {
   document.getElementById('seconds').textContent = String(seconds).padStart(2, '0')
 }
 
+function setupRSVPForm() {
+  const form = document.getElementById('rsvpForm')
+  const attendanceSelect = document.getElementById('attendance')
+  const guestsGroup = document.getElementById('guestsGroup')
+  const submitBtn = form.querySelector('.submit-btn')
+  const formMessage = document.getElementById('formMessage')
+
+  attendanceSelect.addEventListener('change', (e) => {
+    if (e.target.value === 'not_attending') {
+      guestsGroup.style.display = 'none'
+      document.getElementById('numberOfGuests').removeAttribute('required')
+    } else {
+      guestsGroup.style.display = 'block'
+      document.getElementById('numberOfGuests').setAttribute('required', 'required')
+    }
+  })
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault()
+
+    submitBtn.disabled = true
+    submitBtn.querySelector('.btn-text').style.display = 'none'
+    submitBtn.querySelector('.btn-loader').style.display = 'inline'
+    formMessage.className = 'form-message'
+    formMessage.textContent = ''
+
+    const formData = new FormData(form)
+
+    try {
+      const response = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(formData).toString()
+      })
+
+      if (response.ok) {
+        formMessage.className = 'form-message success'
+        formMessage.textContent = 'Thank you for your RSVP! We look forward to celebrating with you.'
+        form.reset()
+        guestsGroup.style.display = 'none'
+      } else {
+        throw new Error('Form submission failed')
+      }
+    } catch (error) {
+      console.error('Error submitting RSVP:', error)
+      formMessage.className = 'form-message error'
+      formMessage.textContent = 'There was an error submitting your RSVP. Please try again.'
+    } finally {
+      submitBtn.disabled = false
+      submitBtn.querySelector('.btn-text').style.display = 'inline'
+      submitBtn.querySelector('.btn-loader').style.display = 'none'
+    }
+  })
+}
+
 function setupSmoothScroll() {
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
@@ -59,25 +114,9 @@ function observeElements() {
   })
 }
 
-const handleSubmit = event => {
-  event.preventDefault();
-
-  const myForm = event.target;
-  const formData = new FormData(myForm);
-
-  fetch("/POST", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams(formData).toString()
-  })
-    .then(() => console.log("Form successfully submitted"))
-    .catch(error => alert(error));
-};
-
-document.querySelector("form").addEventListener("submit", handleSubmit)
-
 updateCountdown()
 setInterval(updateCountdown, 1000)
 
+setupRSVPForm()
 setupSmoothScroll()
 observeElements()
