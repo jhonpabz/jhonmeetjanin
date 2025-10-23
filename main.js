@@ -28,18 +28,15 @@ function setupRSVPForm() {
   const form = document.getElementById('rsvpForm')
   const attendanceSelect = document.getElementById('attendance')
   const guestsGroup = document.getElementById('guestsGroup')
-  // const mealGroup = document.getElementById('mealGroup') // Commented out as mealPreference is not in the form
   const submitBtn = form.querySelector('.submit-btn')
   const formMessage = document.getElementById('formMessage')
 
   attendanceSelect.addEventListener('change', (e) => {
     if (e.target.value === 'not_attending') {
       guestsGroup.style.display = 'none'
-      // mealGroup.style.display = 'none' // Commented out
       document.getElementById('numberOfGuests').removeAttribute('required')
     } else {
       guestsGroup.style.display = 'block'
-      // mealGroup.style.display = 'block' // Commented out
       document.getElementById('numberOfGuests').setAttribute('required', 'required')
     }
   })
@@ -53,27 +50,23 @@ function setupRSVPForm() {
     formMessage.className = 'form-message'
     formMessage.textContent = ''
 
-    const formData = {
-      guest_name: document.getElementById('guestName').value.trim(),
-      email: document.getElementById('email').value.trim() || 'Not provided',
-      attendance: document.getElementById('attendance').value,
-      number_of_guests: document.getElementById('attendance').value === 'attending'
-        ? parseInt(document.getElementById('numberOfGuests').value)
-        : 0,
-      // meal_preference: document.getElementById('mealPreference').value || 'Not provided', // Commented out
-      message: document.getElementById('message').value.trim() || 'No message provided'
-    }
+    const formData = new FormData(form)
 
     try {
-      // Send email using EmailJS (Service ID and Template ID)
-      await emailjs.send('service_9vt10we', 'template_0s8i7wf', formData)
-      // Replace 'YOUR_SERVICE_ID' and 'YOUR_TEMPLATE_ID' with your EmailJS Service ID and Template ID
+      const response = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(formData).toString()
+      })
 
-      formMessage.className = 'form-message success'
-      formMessage.textContent = 'Thank you for your RSVP! We look forward to celebrating with you.'
-      form.reset()
-      guestsGroup.style.display = 'none'
-      // mealGroup.style.display = 'none' // Commented out
+      if (response.ok) {
+        formMessage.className = 'form-message success'
+        formMessage.textContent = 'Thank you for your RSVP! We look forward to celebrating with you.'
+        form.reset()
+        guestsGroup.style.display = 'none'
+      } else {
+        throw new Error('Form submission failed')
+      }
     } catch (error) {
       console.error('Error submitting RSVP:', error)
       formMessage.className = 'form-message error'
