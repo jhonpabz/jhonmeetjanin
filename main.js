@@ -65,8 +65,8 @@ function setupRSVPForm() {
     }
 
     try {
-      // Send email using EmailJS
-      await emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', formData)
+      // Send email using EmailJS (Service ID and Template ID)
+      await emailjs.send('service_9vt10we', 'template_0s8i7wf', formData)
       // Replace 'YOUR_SERVICE_ID' and 'YOUR_TEMPLATE_ID' with your EmailJS Service ID and Template ID
 
       formMessage.className = 'form-message success'
